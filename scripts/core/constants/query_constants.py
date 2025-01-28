@@ -1,0 +1,3 @@
+class QueryConstants:
+    pass
+
