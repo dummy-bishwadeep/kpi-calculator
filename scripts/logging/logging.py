@@ -2,9 +2,7 @@ import logging
 import os
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler, SocketHandler
-
 import yaml
-
 from scripts.config.app_configurations import Logging
 
 

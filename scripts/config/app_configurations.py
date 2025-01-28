@@ -62,6 +62,7 @@ class Logging:
     level = config.get("LOGGING", "level", fallback="INFO")
     level = level or "INFO"
     print(f"Logging Level set to: {level}")
+    VALUE = config.get("LOGGING", "ENABLE_FILE_LOG")
     ENABLE_FILE_LOG = config.getboolean("LOGGING", "ENABLE_FILE_LOG", fallback=False)
     ENABLE_CONSOLE_LOG = config.getboolean(
         "LOGGING", "ENABLE_CONSOLE_LOG", fallback=True
@@ -71,13 +72,12 @@ class Logging:
     )
 
 
-class Timezone:
+class TimezoneConf:
     """
     Timezone settings configured from the loaded configuration.
     """
 
     desired_time_zone = config.get("TIME_ZONE", "desired_time_zone", fallback="UTC")
-
 
 
 class DBConf:

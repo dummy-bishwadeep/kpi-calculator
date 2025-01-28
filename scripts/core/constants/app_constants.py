@@ -15,13 +15,7 @@ class CollectionNames:
 
 
 class PSQLTableNames:
-    events = "events"
-    events_view = "events_view"
-    event_categories = "event_categories"
-    event_sub_category = "event_sub_category"
-    reason_code = "reason_code"
-    production_plan = "production_plan"
-    production_plan_view = "production_plan_view"
+    daily_avg_aggregated_data = "daily_avg_aggregated_data"
 
 
 class MongoQueryConstants:

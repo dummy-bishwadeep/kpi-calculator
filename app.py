@@ -1,24 +1,21 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
-from datetime import datetime
 import pytz
 import time
+from scripts.config.app_configurations import TimezoneConf
+from scripts.core.kpi.sample import calc_daily_avg_aggregated_data
 
-# Function to perform the scheduled operation
-def my_task():
-    print(f"Task executed at {datetime.now()}")
 
-# Optimized function for scheduling a task every 5 minutes in a specific timezone
-def schedule_task_every_5_minutes(timezone):
+def task_schedular():
     # Initialize the scheduler
-    scheduler = BackgroundScheduler(timezone=pytz.timezone(timezone))
+    scheduler = BackgroundScheduler(timezone=pytz.timezone(TimezoneConf.desired_time_zone))
 
-    # # Add the task with a 5-minute interval
+    # # Add the task with a provided interval
     scheduler.add_job(
-        my_task,
-        trigger=IntervalTrigger(seconds=5),  # Every 5 minutes
-        id="task_every_5_minutes",
+        calc_daily_avg_aggregated_data,
+        trigger=IntervalTrigger(minutes=5),
+        id="batch_job_kpi_calculator",
         replace_existing=True
     )
 
@@ -32,11 +29,9 @@ def schedule_task_every_5_minutes(timezone):
 
     # Start the scheduler
     scheduler.start()
-    print(f"Scheduler started in timezone: {timezone}")
+    print(f"Scheduler started")
 
-# Specify your timezone (e.g., "Asia/Kolkata", "America/New_York")
-timezone = "Asia/Kolkata"
-schedule_task_every_5_minutes(timezone)
+task_schedular()
 
 # Keep the main thread alive to let the scheduler run
 try:

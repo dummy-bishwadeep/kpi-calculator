@@ -1,9 +1,12 @@
-import pathlib
+from dotenv import load_dotenv
+load_dotenv()
 
+import pathlib
 from pydantic import Field
 from pydantic_settings import BaseSettings
-
 from scripts.config.app_configurations import PathToStorage, ServiceConfig
+
+
 
 
 class _Service(BaseSettings):

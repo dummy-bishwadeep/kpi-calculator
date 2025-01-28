@@ -359,3 +359,26 @@ class PostgresUtility:
         except Exception as fetch_error:
             logger.error(f"Failed to execute raw query: {fetch_error}")
             return []
+
+    def insert_records_by_raw_query(self, table_name: str, data_to_insert: dict):
+        """
+        Insert records using a raw SQL query and a dictionary of column-value pairs.
+        The column names are automatically extracted from the dictionary keys.
+        """
+        try:
+            # Generate columns and placeholders dynamically
+            columns = ', '.join(data_to_insert)
+            values = ', '.join([f":{key}" for key in data_to_insert])
+
+            # Create the raw SQL query dynamically
+            raw_query = f"INSERT INTO {table_name} ({columns}) VALUES ({values})"
+
+            self.session.execute(raw_query, data_to_insert)
+            self.session.commit()
+            return True
+
+        except Exception as insert_error:
+            self.session.rollback()  # Rollback in case of an error
+            logger.error(f"Failed to insert data: {insert_error}")
+            return False
+

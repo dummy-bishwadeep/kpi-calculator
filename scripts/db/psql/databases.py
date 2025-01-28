@@ -7,13 +7,14 @@ from sqlalchemy.pool import QueuePool
 from sqlalchemy.schema import CreateSchema
 from sqlalchemy_utils import create_database, database_exists
 
-from scripts.config.app_configurations import DBConf
+from scripts.config.app_configurations import DBConf, DatabaseConstants
 from scripts.utils.db_name_util import get_db_name
 
 Base = declarative_base()
 
 
-def get_assistant_db(project_id, db_name: str = DBConf.ASSISTANT_DB):
+def get_assistant_db(db_name: str = DBConf.ASSISTANT_DB):
+    project_id = DatabaseConstants.project_id
     postgres_uri = DBConf.ASSISTANT_DB_URI
     postgres_uri = f"{postgres_uri}/{db_name}"
     db_name = os.path.basename(postgres_uri)
@@ -38,19 +39,15 @@ def get_assistant_db(project_id, db_name: str = DBConf.ASSISTANT_DB):
 
     db = session_local()
     try:
-        yield db
+        return db
     finally:
         db.close()
         engine.dispose()
 
 
-def get_unified_model_db(project_id):
-    yield from get_assistant_db(
-        project_id=project_id, db_name=DBConf.UNIFIED_MODEL_DB
-    )
+def get_unified_model_db():
+    return get_assistant_db(db_name=DBConf.UNIFIED_MODEL_DB)
 
 
-def get_event_db(project_id):
-    yield from get_assistant_db(
-        project_id=project_id, db_name=DBConf.ILENS_EVENT_DB
-    )
+def get_event_db():
+    return get_assistant_db(db_name=DBConf.ILENS_EVENT_DB)
