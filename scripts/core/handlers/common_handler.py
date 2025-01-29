@@ -13,8 +13,8 @@ class CommonHandler:
     ):
         self.project_id = DatabaseConstants.project_id
         self.assistant_db_pg_obj = CommonPSQL(database=DBConf.ASSISTANT_DB)
-        self.unified_model_db_pg_obj = CommonPSQL(database=DBConf.UNIFIED_MODEL_DB)
-        self.events_db_pg_obj = CommonPSQL(database=DBConf.ILENS_EVENT_DB)
+        # self.unified_model_db_pg_obj = CommonPSQL(database=DBConf.UNIFIED_MODEL_DB)
+        # self.events_db_pg_obj = CommonPSQL(database=DBConf.ILENS_EVENT_DB)
         self.kairos_obj = KairosDBUtility()
         self.common_utils = CommonUtils(self.project_id)
 
@@ -42,13 +42,17 @@ class CommonHandler:
 
     def fetch_daily_avg_aggregated_data(self):
         try:
+            interval = 1
             current_time = datetime.datetime.now(datetime.timezone.utc)
-            start_time = int((current_time - datetime.timedelta(minutes=5)).timestamp() * 1000) # previous date
+            start_time = int((current_time - datetime.timedelta(minutes=interval)).timestamp() * 1000) # previous date
             end_time = int(current_time.timestamp() * 1000) # current date
 
             query = KairosQueryConstants.daily_avg_query
             query["start_absolute"] = start_time
             query["end_absolute"] = end_time
+            query['metrics'][0]['aggregators'][0]['sampling']['value'] = str(interval)
+
+            print(query)
 
             data = self.kairos_obj.read(query_json=query)
             values = data.get('queries', [{}])[0].get('results', [{}])[0].get('values', [])
@@ -58,9 +62,13 @@ class CommonHandler:
                 val = each[1]
                 total_sum += val
 
-            avg_val = round(total_sum / len(values), 2)
+            try:
+                avg_val = round(total_sum / len(values), 2)
+            except ZeroDivisionError:
+                avg_val = 0
             print(avg_val)
 
             return start_time, end_time, avg_val
         except Exception as e:
             print(f"Error occurred while fetching hourly min aggregated data: {e}")
+            raise e

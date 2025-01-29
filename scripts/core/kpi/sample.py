@@ -12,3 +12,5 @@ def calc_daily_avg_aggregated_data():
         logger.error(f"Failed to calculate daily average aggregated data: {error}")
         raise error
 
+
+calc_daily_avg_aggregated_data()

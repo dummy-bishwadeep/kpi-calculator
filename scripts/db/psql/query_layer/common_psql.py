@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 session_db = {
     DBConf.ASSISTANT_DB: get_assistant_db(),
-    DBConf.ILENS_EVENT_DB: get_event_db(),
-    DBConf.UNIFIED_MODEL_DB: get_unified_model_db()
+    # DBConf.ILENS_EVENT_DB: get_event_db(),
+    # DBConf.UNIFIED_MODEL_DB: get_unified_model_db()
 }
 
 
