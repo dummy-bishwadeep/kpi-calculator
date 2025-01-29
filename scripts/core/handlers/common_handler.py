@@ -1,4 +1,4 @@
-from scripts.config.app_configurations import DatabaseConstants, DBConf
+from scripts.config.app_configurations import DatabaseConstants, DBConf, SchedulerConfig
 from scripts.core.constants.app_constants import PSQLTableNames
 from scripts.core.constants.kairos_query_constants import KairosQueryConstants
 from scripts.db.psql.query_layer.common_psql import CommonPSQL
@@ -42,15 +42,14 @@ class CommonHandler:
 
     def fetch_daily_avg_aggregated_data(self):
         try:
-            interval = 1
             current_time = datetime.datetime.now(datetime.timezone.utc)
-            start_time = int((current_time - datetime.timedelta(minutes=interval)).timestamp() * 1000) # previous date
+            start_time = int((current_time - datetime.timedelta(days=1)).timestamp() * 1000) # previous date
             end_time = int(current_time.timestamp() * 1000) # current date
 
             query = KairosQueryConstants.daily_avg_query
             query["start_absolute"] = start_time
             query["end_absolute"] = end_time
-            query['metrics'][0]['aggregators'][0]['sampling']['value'] = str(interval)
+            # query['metrics'][0]['aggregators'][0]['sampling']['value'] = str(interval)
 
             print(query)
 

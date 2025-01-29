@@ -131,3 +131,7 @@ class PathToStorage:
     MODULE_PATH = os.path.join(BASE_PATH, MOUNT_DIR)
 
 
+class SchedulerConfig:
+    DAILY = config.getboolean("SCHEDULER", "daily", fallback=False)
+    MINUTES = config.get("SCHEDULER", "minutes")
+    HOURS = config.get("SCHEDULER", "hours")

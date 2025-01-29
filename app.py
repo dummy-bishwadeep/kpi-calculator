@@ -4,16 +4,16 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
-from scripts.config.app_configurations import TimezoneConf
+from scripts.config.app_configurations import TimezoneConf, SchedulerConfig
 from scripts.core.kpi.sample import calc_daily_avg_aggregated_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Scheduler Configuration
-INTERVAL_MINUTES = 1
-CRON_HOUR = 7
-CRON_MINUTE = 0
+# INTERVAL_MINUTES = 1
+# CRON_HOUR = 7
+# CRON_MINUTE = 0
 
 
 class TaskScheduler:
@@ -25,20 +25,20 @@ class TaskScheduler:
 
     def _setup_jobs(self):
         """Add scheduled jobs to the scheduler."""
-        self.scheduler.add_job(
-            calc_daily_avg_aggregated_data,
-            trigger=IntervalTrigger(minutes=INTERVAL_MINUTES),
-            id="batch_job_kpi_calculator",
-            replace_existing=True
-        )
-
-        # Uncomment to enable a daily job at 7:00 AM
-        # self.scheduler.add_job(
-        #     my_task,
-        #     trigger=CronTrigger(hour=CRON_HOUR, minute=CRON_MINUTE),
-        #     id="daily_task_7am",
-        #     replace_existing=True
-        # )
+        if SchedulerConfig.DAILY:
+            self.scheduler.add_job(
+                calc_daily_avg_aggregated_data,
+                trigger=CronTrigger(hour=int(SchedulerConfig.HOURS), minute=int(SchedulerConfig.MINUTES)),
+                id="daily_task_7am",
+                replace_existing=True
+            )
+        else:
+            self.scheduler.add_job(
+                calc_daily_avg_aggregated_data,
+                trigger=IntervalTrigger(minutes=int(SchedulerConfig.MINUTES)),
+                id="batch_job_kpi_calculator",
+                replace_existing=True
+            )
 
     def start(self):
         """Start the scheduler."""
